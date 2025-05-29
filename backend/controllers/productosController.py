@@ -2,13 +2,12 @@ import mysql.connector
 from mysql.connector import Error
 from pydantic import BaseModel
 from fastapi import Form, HTTPException
-from typing import List
+from typing import List, Optional
 
-# DB connection
 from storage import get_db
 
+
 # Pydantic models
-# Pydantic models para productos
 class Product(BaseModel):
     id: int
     nombre: str
@@ -20,9 +19,14 @@ class Product(BaseModel):
     tipo_disco: str
     capacidad_disco: str
     sistema_operativo: str
+    pulgadas: str
+    tonner_referencia: str
+    Multifuncional: str
+    tipo_impresion: str
+    tipo_tv: str
     pertenencia: str
     categoria_id: int
-    categoria_nombre: str | None = None
+    categoria_nombre: str
 
 class ProductCreate(BaseModel):
     nombre: str
@@ -34,6 +38,11 @@ class ProductCreate(BaseModel):
     tipo_disco: str
     capacidad_disco: str
     sistema_operativo: str
+    pulgadas: Optional[str]
+    tonner_referencia: Optional[str]
+    Multifuncional: Optional[bool]
+    tipo_impresion: Optional[str]
+    tipo_tv: Optional[str]
     pertenencia: str
     categoria_id: int
 
@@ -47,10 +56,15 @@ class ProductUpdate(BaseModel):
     tipo_disco: str
     capacidad_disco: str
     sistema_operativo: str
+    pulgadas: Optional[str]
+    tonner_referencia: Optional[str]
+    Multifuncional: Optional[bool]
+    tipo_impresion: Optional[str]
+    tipo_tv: Optional[str]
     pertenencia: str
     categoria_id: int
 
-# Dependencias para FastAPI que leen Form data
+# Dependencies for FastAPI form data
 async def get_product_create(
     nombre: str = Form(...),
     marca: str = Form(...),
@@ -61,6 +75,11 @@ async def get_product_create(
     tipo_disco: str = Form(...),
     capacidad_disco: str = Form(...),
     sistema_operativo: str = Form(...),
+    pulgadas: Optional[str] = Form(None),
+    tonner_referencia: Optional[str] = Form(None),
+    Multifuncional: Optional[bool] = Form(None),
+    tipo_impresion: Optional[str] = Form(None),
+    tipo_tv: Optional[str] = Form(None),
     pertenencia: str = Form(...),
     categoria_id: int = Form(...)
 ) -> ProductCreate:
@@ -74,6 +93,11 @@ async def get_product_create(
         tipo_disco=tipo_disco,
         capacidad_disco=capacidad_disco,
         sistema_operativo=sistema_operativo,
+        pulgadas=pulgadas,
+        tonner_referencia=tonner_referencia,
+        Multifuncional=Multifuncional,
+        tipo_impresion=tipo_impresion,
+        tipo_tv=tipo_tv,
         pertenencia=pertenencia,
         categoria_id=categoria_id
     )
@@ -88,6 +112,11 @@ async def get_product_update(
     tipo_disco: str = Form(...),
     capacidad_disco: str = Form(...),
     sistema_operativo: str = Form(...),
+    pulgadas: Optional[str] = Form(None),
+    tonner_referencia: Optional[str] = Form(None),
+    Multifuncional: Optional[bool] = Form(None),
+    tipo_impresion: Optional[str] = Form(None),
+    tipo_tv: Optional[str] = Form(None),
     pertenencia: str = Form(...),
     categoria_id: int = Form(...)
 ) -> ProductUpdate:
@@ -101,10 +130,14 @@ async def get_product_update(
         tipo_disco=tipo_disco,
         capacidad_disco=capacidad_disco,
         sistema_operativo=sistema_operativo,
+        pulgadas=pulgadas,
+        tonner_referencia=tonner_referencia,
+        Multifuncional=Multifuncional,
+        tipo_impresion=tipo_impresion,
+        tipo_tv=tipo_tv,
         pertenencia=pertenencia,
         categoria_id=categoria_id
     )
-
 
 # CRUD operations
 
@@ -112,7 +145,13 @@ def get_product(product_id: int) -> Product:
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
     cursor.execute(
-        "SELECT * FROM productos WHERE id = %s",
+        """
+        SELECT *,
+               c.nombre AS categoria_nombre
+        FROM productos p
+        JOIN categoria c ON p.categoria_id = c.id
+        WHERE p.id = %s
+        """,
         (product_id,)
     )
     row = cursor.fetchone()
@@ -129,15 +168,17 @@ def get_products() -> List[Product]:
       SELECT
         p.id, p.nombre, p.marca, p.serial, p.procesador, p.modelo,
         p.capacidad_ram, p.tipo_disco, p.capacidad_disco,
-        p.sistema_operativo, p.pertenencia, p.categoria_id,
+        p.sistema_operativo, p.pulgadas, p.tonner_referencia,
+        p.Multifuncional, p.tipo_impresion, p.tipo_tv,
+        p.pertenencia, p.categoria_id,
         c.nombre AS categoria_nombre
       FROM productos p
       JOIN categoria c ON p.categoria_id = c.id
-    """)
+    """
+    )
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
-    # Asegúrate de añadir `categoria_nombre: str` al modelo Pydantic Product
     return [Product(**r) for r in rows]
 
 def add_product(
@@ -150,13 +191,17 @@ def add_product(
     tipo_disco: str,
     capacidad_disco: str,
     sistema_operativo: str,
+    pulgadas: Optional[str],
+    tonner_referencia: Optional[str],
+    Multifuncional: Optional[bool],
+    tipo_impresion: Optional[str],
+    tipo_tv: Optional[str],
     pertenencia: str,
     categoria_id: int
 ) -> dict:
     conn = get_db()
     cursor = conn.cursor()
 
-    # Verificar existencia de la categoría
     cursor.execute(
         "SELECT id FROM categoria WHERE id = %s",
         (categoria_id,)
@@ -166,7 +211,6 @@ def add_product(
         conn.close()
         return {"success": False, "message": "Categoría no encontrada"}
 
-    # Verificar serial único
     cursor.execute(
         "SELECT id FROM productos WHERE serial = %s",
         (serial,)
@@ -176,19 +220,22 @@ def add_product(
         conn.close()
         return {"success": False, "message": "Serial ya registrado"}
 
-    # Insertar producto
     cursor.execute(
         """
         INSERT INTO productos
           (nombre, marca, serial, procesador, modelo,
            capacidad_ram, tipo_disco, capacidad_disco,
-           sistema_operativo, pertenencia, categoria_id)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+           sistema_operativo, pulgadas, tonner_referencia,
+           Multifuncional, tipo_impresion, tipo_tv,
+           pertenencia, categoria_id)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """,
         (
             nombre, marca, serial, procesador, modelo,
             capacidad_ram, tipo_disco, capacidad_disco,
-            sistema_operativo, pertenencia, categoria_id
+            sistema_operativo, pulgadas, tonner_referencia,
+            Multifuncional, tipo_impresion, tipo_tv,
+            pertenencia, categoria_id
         )
     )
     conn.commit()
@@ -207,13 +254,17 @@ def update_product(
     tipo_disco: str,
     capacidad_disco: str,
     sistema_operativo: str,
+    pulgadas: Optional[str],
+    tonner_referencia: Optional[str],
+    Multifuncional: Optional[bool],
+    tipo_impresion: Optional[str],
+    tipo_tv: Optional[str],
     pertenencia: str,
     categoria_id: int
 ) -> dict:
     conn = get_db()
     cursor = conn.cursor()
 
-    # Verificar producto existente
     cursor.execute(
         "SELECT id FROM productos WHERE id = %s",
         (product_id,)
@@ -223,7 +274,6 @@ def update_product(
         conn.close()
         return {"success": False, "message": "Producto no encontrado"}
 
-    # Verificar categoría
     cursor.execute(
         "SELECT id FROM categoria WHERE id = %s",
         (categoria_id,)
@@ -233,20 +283,23 @@ def update_product(
         conn.close()
         return {"success": False, "message": "Categoría no encontrada"}
 
-    # Actualizar
     cursor.execute(
         """
         UPDATE productos
         SET nombre=%s, marca=%s, serial=%s, procesador=%s,
             modelo=%s, capacidad_ram=%s, tipo_disco=%s,
             capacidad_disco=%s, sistema_operativo=%s,
-            pertenencia=%s, categoria_id=%s
+            pulgadas=%s, tonner_referencia=%s, Multifuncional=%s,
+            tipo_impresion=%s, tipo_tv=%s, pertenencia=%s,
+            categoria_id=%s
         WHERE id=%s
         """,
         (
             nombre, marca, serial, procesador, modelo,
             capacidad_ram, tipo_disco, capacidad_disco,
-            sistema_operativo, pertenencia, categoria_id,
+            sistema_operativo, pulgadas, tonner_referencia,
+            Multifuncional, tipo_impresion, tipo_tv,
+            pertenencia, categoria_id,
             product_id
         )
     )
@@ -258,7 +311,6 @@ def update_product(
 def delete_product(product_id: int) -> dict:
     conn = get_db()
     cursor = conn.cursor()
-    # Verificar existencia
     cursor.execute(
         "SELECT id FROM productos WHERE id = %s",
         (product_id,)
@@ -276,6 +328,3 @@ def delete_product(product_id: int) -> dict:
     cursor.close()
     conn.close()
     return {"success": True, "message": "Producto eliminado correctamente"}
-
-def fetch_product_by_id(product_id: int) -> Product:
-    return get_product(product_id)

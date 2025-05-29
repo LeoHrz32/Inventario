@@ -6,8 +6,7 @@ from controllers.productosController import (
     ProductCreate, ProductUpdate,
     get_product, get_products,
     add_product, update_product,
-    delete_product, fetch_product_by_id,
-    get_product_create, get_product_update
+    delete_product,get_product_create, get_product_update
 )
 
 router = APIRouter()
@@ -19,6 +18,7 @@ async def list_products():
     html = open(path, encoding="utf-8").read()
     rows = "".join([
         f"<tr>"
+        f"<td>{p.categoria_nombre}</td>"
         f"<td>{p.nombre}</td>"
         f"<td>{p.marca}</td>"
         f"<td>{p.serial}</td>"
@@ -28,8 +28,12 @@ async def list_products():
         f"<td>{p.tipo_disco}</td>"
         f"<td>{p.capacidad_disco}</td>"
         f"<td>{p.sistema_operativo}</td>"
+        f"<td>{p.pulgadas or ''}</td>"
+        f"<td>{p.tonner_referencia or ''}</td>"
+        f"<td>{'Sí' if p.Multifuncional else 'No'}</td>"
+        f"<td>{p.tipo_impresion or ''}</td>"
+        f"<td>{p.tipo_tv or ''}</td>"
         f"<td>{p.pertenencia}</td>"
-        f"<td>{p.categoria_id}</td>"
         f"<td>"
         f"  <button onclick='editProduct({p.id})'>Editar</button>"
         f"  <button onclick='deleteProduct({p.id})'>Eliminar</button>"
@@ -46,7 +50,7 @@ async def list_products_json():
 @router.get("/productById/{product_id}")
 async def get_product_by_id_route(product_id: int):
     try:
-        prod = fetch_product_by_id(product_id)
+        prod = get_product(product_id)
         return JSONResponse(content=prod.dict())
     except HTTPException:
         raise
@@ -94,6 +98,8 @@ async def create_product(
         prod.nombre, prod.marca, prod.serial, prod.procesador,
         prod.modelo, prod.capacidad_ram, prod.tipo_disco,
         prod.capacidad_disco, prod.sistema_operativo,
+        prod.pulgadas, prod.tonner_referencia, prod.Multifuncional,
+        prod.tipo_impresion, prod.tipo_tv,
         prod.pertenencia, prod.categoria_id
     )
     if res["success"]:
@@ -109,6 +115,8 @@ async def update_product_route(
         id, prod.nombre, prod.marca, prod.serial, prod.procesador,
         prod.modelo, prod.capacidad_ram, prod.tipo_disco,
         prod.capacidad_disco, prod.sistema_operativo,
+        prod.pulgadas, prod.tonner_referencia, prod.Multifuncional,
+        prod.tipo_impresion, prod.tipo_tv,
         prod.pertenencia, prod.categoria_id
     )
     if res["success"]:
