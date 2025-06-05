@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function fetchCategorias(page = 1) {
   try {
     const resp = await fetch(
-      `http://10.1.1.89:8100/users_paginated?page=${page}&per_page=${categoriasPerPage}`
+      `http://10.1.1.89:8200/users_paginated?page=${page}&per_page=${categoriasPerPage}`
     );
     if (!resp.ok) throw new Error("Error al obtener los datos.");
     const data = await resp.json();
@@ -88,7 +88,7 @@ async function searchUsers() {
   if (!q) return renderUsers(currentPage);
   try {
     const resp = await fetch(
-      `http://10.1.1.89:8100/users_search?query=${encodeURIComponent(q)}`
+      `http://10.1.1.89:8200/users_search?query=${encodeURIComponent(q)}`
     );
     if (!resp.ok) throw new Error();
     const data = await resp.json();
@@ -130,7 +130,7 @@ function handleUserModal() {
       str_password: document.getElementById("password").value,
     };
     try {
-      const resp = await fetch("http://10.1.1.89:8100/users/", {
+      const resp = await fetch("http://10.1.1.89:8200/users/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -157,7 +157,7 @@ function handleUserModal() {
 }
 
 function editUser(id) {
-  fetch(`http://10.1.1.89:8100/userById/${id}`)
+  fetch(`http://10.1.1.89:8200/userById/${id}`)
     .then((r) => {
       if (!r.ok) throw new Error();
       return r.json();
@@ -175,7 +175,7 @@ function editUser(id) {
         e.preventDefault();
         const formData = new FormData(e.target);
         try {
-          const resp = await fetch(`http://10.1.1.89:8100/usersUpdate/${id}`, {
+          const resp = await fetch(`http://10.1.1.89:8200/usersUpdate/${id}`, {
             method: "PUT",
             body: formData,
           });

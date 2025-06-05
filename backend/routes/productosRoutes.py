@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import HTMLResponse, JSONResponse
 import os
+from fastapi.responses import StreamingResponse
+import io
+from openpyxl import Workbook
 
 from controllers.productosController import (
     ProductCreate, ProductUpdate,
@@ -44,7 +47,7 @@ async def list_products():
     return HTMLResponse(html.replace("<!-- rows-placeholder -->", rows))
 
 @router.get("/productsJSON")
-async def list_products_json():
+async def list_products_json(): 
     return JSONResponse(content={"products": [p.dict() for p in get_products()]})
 
 @router.get("/productById/{product_id}")
@@ -77,9 +80,25 @@ async def list_products_paginated(
 
 @router.get("/products_search")
 async def search_products(query: str = Query(..., alias="query")):
+    query_lower = query.lower()
     results = [
         p for p in get_products()
-        if query.lower() in p.nombre.lower() or query.lower() in p.marca.lower()
+        if query_lower in str(p.categoria_nombre).lower()
+        or query_lower in str(p.nombre).lower()
+        or query_lower in str(p.marca).lower()
+        or query_lower in str(p.serial).lower()
+        or query_lower in str(p.procesador).lower()
+        or query_lower in str(p.modelo).lower()
+        or query_lower in str(p.capacidad_ram).lower()
+        or query_lower in str(p.tipo_disco).lower()
+        or query_lower in str(p.capacidad_disco).lower()
+        or query_lower in str(p.sistema_operativo).lower()
+        or query_lower in str(p.pulgadas or '').lower()
+        or query_lower in str(p.tonner_referencia or '').lower()
+        or query_lower in ("sí" if p.Multifuncional else "no")
+        or query_lower in str(p.tipo_impresion or '').lower()
+        or query_lower in str(p.tipo_tv or '').lower()
+        or query_lower in str(p.pertenencia).lower()
     ]
     return {"products": [p.dict() for p in results]}
 
@@ -122,3 +141,56 @@ async def update_product_route(
     if res["success"]:
         return {"message": res["message"]}
     raise HTTPException(status_code=404, detail=res["message"])
+
+
+@router.get("/products/export/excel")
+async def export_products_excel():
+    products = get_products()
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Productos"
+
+    # Encabezados
+    headers = [
+        "ID", "Categoría", "Nombre", "Marca", "Serial", "Procesador", "Modelo",
+        "Capacidad RAM", "Tipo Disco", "Capacidad Disco", "Sistema Operativo",
+        "Pulgadas", "Tonner Referencia", "Multifuncional", "Tipo Impresión",
+        "Tipo TV", "Pertenencia"
+    ]
+    ws.append(headers)
+
+    # Datos
+    for p in products:
+        ws.append([
+            p.id,
+            p.categoria_nombre,
+            p.nombre,
+            p.marca,
+            p.serial,
+            p.procesador,
+            p.modelo,
+            p.capacidad_ram,
+            p.tipo_disco,
+            p.capacidad_disco,
+            p.sistema_operativo,
+            p.pulgadas or '',
+            p.tonner_referencia or '',
+            "Sí" if p.Multifuncional else "No",
+            p.tipo_impresion or '',
+            p.tipo_tv or '',
+            p.pertenencia
+        ])
+
+    # Guardar en memoria
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    return StreamingResponse(
+        output,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={
+            "Content-Disposition": "attachment; filename=productos.xlsx"
+        }
+    )

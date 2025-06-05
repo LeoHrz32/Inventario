@@ -4,55 +4,62 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lista de Productos</title>
+    <title>Inventario de Productos</title>
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
-    <!-- Tus estilos personalizados -->
-    <link rel="stylesheet" href="./static/css/productos.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="./static/css/newproduct.css" />
 </head>
 
 <body>
-
-    <!-- Barra de navegación -->
+    <!-- Navbar superior -->
     <nav class="navbar-custom" role="navigation" aria-label="main navigation">
         <div class="nav-links">
             <a href="/users"><i class="fas fa-user"></i> Usuarios</a>
             <a href="/categorias"><i class="fas fa-shield-alt"></i> Categorías</a>
-            <a href="/products"><i class="fas fa-cubes"></i> Productos</a>
+            <a href="/products"><i class="fas fa-cogs"></i> Productos</a>
         </div>
         <button id="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
     </nav>
 
-    <!-- MAIN CONTENT -->
+    <!-- Contenido principal -->
     <div class="main-content container-fluid">
-        <h1 class="mt-4 mb-3 text-center">Lista de Productos</h1>
+        <h1 class="mt-4 mb-3 text-center">Lista de Inventario</h1>
 
-        <div class="search-bar mb-4 d-flex justify-content-center align-items-center gap-2">
+        <!-- Barra de búsqueda y acciones -->
+        <div class="search-bar mb-4 d-flex justify-content-center align-items-center gap-2 flex-wrap">
             <input type="text" id="search-input" class="form-control search-input" placeholder="Buscar producto..." />
             <button id="search-btn" class="btn btn-outline-secondary search-btn">Buscar</button>
-            <button id="create-btn" class="btn btn-primary create-btn">Crear Producto</button>
-            <button id="export-btn" class="btn btn-success">Exportar a Excel</button>
+            <button id="create-btn" class="btn btn-primary create-btn" data-bs-toggle="modal"
+                data-bs-target="#productModal">
+                Registrar Producto
+            </button>
+            <button id="export-btn" class="btn btn-success" onclick="exportToExcel()">Exportar a Excel</button>
         </div>
 
-        <table id="products-table" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Categoría</th>
-                    <th>Serial</th>
-                    <th>Nombre</th>
-                    <th>Marca</th>
-                    <th>Pertenencia</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- rows-placeholder -->
-            </tbody>
-        </table>
+        <!-- Tabla de productos -->
+        <div class="table-container">
+            <table id="products-table" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Serial</th>
+                        <th>Nombre</th>
+                        <th>Marca</th>
+                        <th>Pertenencia</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- filas generadas por JS -->
+                </tbody>
+            </table>
+        </div>
 
+        <!-- Paginación -->
         <div class="paginator-container d-flex justify-content-center align-items-center gap-2">
             <button id="prev-page" class="btn btn-outline-primary page-btn">Anterior</button>
             <span id="page-info"></span>
@@ -60,195 +67,336 @@
         </div>
     </div>
 
-    <!-- MODAL: Registrar Producto -->
+    <!-- Modal: Registrar Producto -->
     <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
+                <!-- Encabezado -->
+                <div class="modal-header">
                     <h5 class="modal-title" id="productModalLabel">Registrar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
+
+                <!-- Cuerpo -->
                 <div class="modal-body">
-                    <form id="product-form">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Nombre</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" required />
+                    <form id="product-form" enctype="multipart/form-data">
+                        <!-- Selección de categoría -->
+                        <div class="mb-3">
+                            <label for="categoria_id" class="form-label">Categoría</label>
+                            <select id="categoria_id" name="categoria_id" class="form-select" required data-dynamic>
+                                <option value="">Seleccione una categoría</option>
+                                <option value="1">Portátiles</option>
+                                <option value="3">Monitores</option>
+                                <option value="4">Televisores</option>
+                                <option value="2">Todo en Uno</option>
+                                <option value="5">Impresoras</option>
+                            </select>
+                        </div>
+
+                        <!-- Campos dinámicos en dos columnas -->
+                        <div id="dynamic-fields" class="row g-3 mt-3">
+                            <!-- Nombre -->
+                            <div id="create-nombre-group" class="col-md-6 mb-3 d-none">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" data-dynamic />
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Marca</label>
-                                <input type="text" class="form-control" id="marca" name="marca" required />
+
+                            <!-- Marca -->
+                            <div id="create-marca-group" class="col-md-6 mb-3 d-none">
+                                <label for="marca" class="form-label">Marca</label>
+                                <input type="text" class="form-control" id="marca" name="marca" data-dynamic />
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Serial</label>
-                                <input type="text" class="form-control" id="serial" name="serial" required />
+
+                            <!-- Serial -->
+                            <div id="create-serial-group" class="col-md-6 mb-3 d-none">
+                                <label for="serial" class="form-label">Serial</label>
+                                <input type="text" class="form-control" id="serial" name="serial" data-dynamic />
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Procesador</label>
-                                <input type="text" class="form-control" id="procesador" name="procesador" required />
+
+                            <!-- Pulgadas -->
+                            <div id="create-pulgadas-group" class="col-md-6 mb-3 d-none">
+                                <label for="pulgadas" class="form-label">Pulgadas</label>
+                                <input type="text" class="form-control" id="pulgadas" name="pulgadas" data-dynamic />
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Modelo</label>
-                                <input type="text" class="form-control" id="modelo" name="modelo" required />
+
+                            <!-- Procesador -->
+                            <div id="create-procesador-group" class="col-md-6 mb-3 d-none">
+                                <label for="procesador" class="form-label">Procesador</label>
+                                <input type="text" class="form-control" id="procesador" name="procesador"
+                                    data-dynamic />
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Capacidad RAM</label>
-                                <input type="text" class="form-control" id="capacidad_ram" name="capacidad_ram" required />
+
+                            <!-- Capacidad RAM -->
+                            <div id="create-capacidad_ram-group" class="col-md-6 mb-3 d-none">
+                                <label for="capacidad_ram" class="form-label">Capacidad RAM</label>
+                                <input type="text" class="form-control" id="capacidad_ram" name="capacidad_ram"
+                                    data-dynamic />
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Tipo de Disco</label>
-                                <input type="text" class="form-control" id="tipo_disco" name="tipo_disco" required />
+
+                            <!-- Capacidad Disco -->
+                            <div id="create-capacidad_disco-group" class="col-md-6 mb-3 d-none">
+                                <label for="capacidad_disco" class="form-label">Capacidad Disco</label>
+                                <input type="text" class="form-control" id="capacidad_disco" name="capacidad_disco"
+                                    data-dynamic />
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Capacidad Disco</label>
-                                <input type="text" class="form-control" id="capacidad_disco" name="capacidad_disco" required />
+
+                            <!-- Tipo de Disco -->
+                            <div id="create-tipo_disco-group" class="col-md-6 mb-3 d-none">
+                                <label for="tipo_disco" class="form-label">Tipo de disco</label>
+                                <select id="tipo_disco" name="tipo_disco" class="form-select" data-dynamic>
+                                    <option value="">Seleccione</option>
+                                    <option value="Disco estado solido" selected>Disco estado solido</option>
+                                    <option value="Disco estado mecanico">Disco estado mecanico</option>
+                                    <option value="N/A">No aplica</option>
+                                </select>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Sistema Operativo</label>
-                                <input type="text" class="form-control" id="sistema_operativo" name="sistema_operativo" required />
+
+                            <!-- Sistema Operativo -->
+                            <div id="create-sistema_operativo-group" class="col-md-6 mb-3 d-none">
+                                <label for="sistema_operativo" class="form-label">Sistema Operativo</label>
+                                <input type="text" class="form-control" id="sistema_operativo" name="sistema_operativo"
+                                    data-dynamic />
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Pulgadas</label>
-                                <input type="text" class="form-control" id="pulgadas" name="pulgadas" />
+
+                            <!-- Pertenencia -->
+                            <div id="create-pertenencia-group" class="col-md-6 mb-3 d-none">
+                                <label for="pertenencia" class="form-label">Pertenencia</label>
+                                <select id="pertenencia" name="pertenencia" class="form-select" data-dynamic>
+                                    <option value="">Seleccione</option>
+                                    <option value="Gestion Tic" selected>Gestion Tic</option>
+                                    <option value="Contabilidad">Contabilidad</option>
+                                    <option value="Comunicaciones y Marca">Comunicaciones</option>
+                                    <option value="Proyectos">Proyectos</option>
+                                    <option value="Bienestar">Bienestar</option>
+                                    <option value="N/A">No aplica</option>
+                                </select>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Tonner Referencia</label>
-                                <input type="text" class="form-control" id="tonner_referencia" name="tonner_referencia" />
+
+                            <!-- Modelo -->
+                            <div id="create-modelo-group" class="col-md-6 mb-3 d-none">
+                                <label for="modelo" class="form-label">Modelo</label>
+                                <input type="text" class="form-control" id="modelo" name="modelo" data-dynamic />
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Multifuncional</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="Multifuncional" name="Multifuncional" />
-                                    <label class="form-check-label" for="Multifuncional">Sí</label>
-                                </div>
+
+                            <!-- Tonner -->
+                            <div id="create-tonner_referencia-group" class="col-md-6 mb-3 d-none">
+                                <label for="tonner_referencia" class="form-label">Tonner</label>
+                                <input type="text" class="form-control" id="tonner_referencia" name="tonner_referencia"
+                                    data-dynamic />
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Tipo de Impresión</label>
-                                <input type="text" class="form-control" id="tipo_impresion" name="tipo_impresion" />
+
+                            <!-- Multifuncional -->
+                            <div id="create-Multifuncional-group" class="col-md-6 mb-3 d-none">
+                                <label for="Multifuncional" class="form-label">Multifuncional</label>
+                                <select id="Multifuncional" name="Multifuncional" class="form-select" data-dynamic>
+                                    <option value="">Seleccione</option>
+                                    <option value="SI">Sí</option>
+                                    <option value="NO">No</option>
+                                </select>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Tipo TV</label>
-                                <input type="text" class="form-control" id="tipo_tv" name="tipo_tv" />
+
+                            <!-- Tipo de Impresión -->
+                            <div id="create-tipo_impresion-group" class="col-md-6 mb-3 d-none">
+                                <label for="tipo_impresion" class="form-label">Tipo de Impresión</label>
+                                <select id="tipo_impresion" name="tipo_impresion" class="form-select" data-dynamic>
+                                    <option value="">Seleccione</option>
+                                    <option value="COLOR">Color</option>
+                                    <option value="BLANCO Y NEGRO">Blanco y Negro</option>
+                                </select>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Pertenencia</label>
-                                <input type="text" class="form-control" id="pertenencia" name="pertenencia" required />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Categoría</label>
-                                <select class="form-control" id="categoria_id" name="categoria_id" required>
-                                    <option value="">Seleccione una categoría</option>
-                                    <!-- Opciones se inyectarán desde JS -->
+
+                            <!-- Tipo de TV -->
+                            <div id="create-tipo_tv-group" class="col-md-6 mb-3 d-none">
+                                <label for="tipo_tv" class="form-label">Tipo de TV</label>
+                                <select id="tipo_tv" name="tipo_tv" class="form-select" data-dynamic>
+                                    <option value="">Seleccione</option>
+                                    <option value="SMART TV">SMART TV</option>
+                                    <option value="ONE SCREEN">ONE SCREEN</option>
+                                    <option value="IPTV">IPTV</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-success w-100">Registrar</button>
-                        </div>
                     </form>
+                </div>
+
+                <!-- Pie (footer) -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cerrar
+                    </button>
+                    <button type="submit" form="product-form" class="btn btn-primary">
+                        Guardar
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: Editar Producto -->
-    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+
+    <!-- Modal: Editar Producto -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
+                <!-- Encabezado -->
+                <div class="modal-header">
                     <h5 class="modal-title" id="editProductModalLabel">Editar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
+
+                <!-- Cuerpo -->
                 <div class="modal-body">
-                    <form id="edit-product-form">
+                    <form id="edit-product-form" enctype="multipart/form-data">
+                        <!-- 1) ID oculto -->
                         <input type="hidden" id="edit-product-id" name="product_id" />
+
+                        <!-- 2) Categoría (solo lectura) -->
+                        <input type="hidden" id="edit-categoria_id" name="categoria_id" />
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Nombre</label>
-                                <input type="text" class="form-control" id="edit-nombre" name="nombre" required />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Marca</label>
-                                <input type="text" class="form-control" id="edit-marca" name="marca" required />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Serial</label>
-                                <input type="text" class="form-control" id="edit-serial" name="serial" required />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Procesador</label>
-                                <input type="text" class="form-control" id="edit-procesador" name="procesador" required />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Modelo</label>
-                                <input type="text" class="form-control" id="edit-modelo" name="modelo" required />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Capacidad RAM</label>
-                                <input type="text" class="form-control" id="edit-capacidad_ram" name="capacidad_ram" required />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Tipo de Disco</label>
-                                <input type="text" class="form-control" id="edit-tipo_disco" name="tipo_disco" required />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Capacidad Disco</label>
-                                <input type="text" class="form-control" id="edit-capacidad_disco" name="capacidad_disco" required />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Sistema Operativo</label>
-                                <input type="text" class="form-control" id="edit-sistema_operativo" name="sistema_operativo" required />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Pulgadas</label>
-                                <input type="text" class="form-control" id="edit-pulgadas" name="pulgadas" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Tonner Referencia</label>
-                                <input type="text" class="form-control" id="edit-tonner_referencia" name="tonner_referencia" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Multifuncional</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="edit-Multifuncional" name="Multifuncional" />
-                                    <label class="form-check-label" for="edit-Multifuncional">Sí</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Tipo de Impresión</label>
-                                <input type="text" class="form-control" id="edit-tipo_impresion" name="tipo_impresion" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Tipo TV</label>
-                                <input type="text" class="form-control" id="edit-tipo_tv" name="tipo_tv" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Pertenencia</label>
-                                <input type="text" class="form-control" id="edit-pertenencia" name="pertenencia" required />
-                            </div>
-                            <div class="col-md-6">
                                 <label class="form-label">Categoría</label>
-                                <select class="form-control" id="edit-categoria_id" name="categoria_id" required>
-                                    <option value="">Seleccione una categoría</option>
-                                    <!-- Opciones se inyectarán desde JS -->
+                                <input type="text" class="form-control" id="edit-categoria_nombre"
+                                    name="categoria_nombre" readonly placeholder="—" />
+                            </div>
+
+                            <!-- Campos fijos (marca, modelo, serial) -->
+                            <div class="col-md-6">
+                                <label for="edit-marca" class="form-label">Marca</label>
+                                <input type="text" class="form-control" id="edit-marca" name="marca" required
+                                    data-dynamic />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="edit-modelo" class="form-label">Modelo</label>
+                                <input type="text" class="form-control" id="edit-modelo" name="modelo" required
+                                    data-dynamic />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="edit-serial" class="form-label">Serial</label>
+                                <input type="text" class="form-control" id="edit-serial" name="serial" required
+                                    data-dynamic />
+                            </div>
+
+                            <!-- Campos dinámicos en edición: TODOS llevan data-dynamic y su DIV con id="edit-<campo>-group" -->
+                            <div id="edit-nombre-group" class="col-md-6 mb-3 d-none">
+                                <label for="edit-nombre" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="edit-nombre" name="nombre" data-dynamic />
+                            </div>
+
+                            <div id="edit-pulgadas-group" class="col-md-6 mb-3 d-none">
+                                <label for="edit-pulgadas" class="form-label">Pulgadas</label>
+                                <input type="text" class="form-control" id="edit-pulgadas" name="pulgadas"
+                                    data-dynamic />
+                            </div>
+
+                            <div id="edit-procesador-group" class="col-md-6 mb-3 d-none">
+                                <label for="edit-procesador" class="form-label">Procesador</label>
+                                <input type="text" class="form-control" id="edit-procesador" name="procesador"
+                                    data-dynamic />
+                            </div>
+
+                            <div id="edit-capacidad_ram-group" class="col-md-6 mb-3 d-none">
+                                <label for="edit-capacidad_ram" class="form-label">Capacidad RAM</label>
+                                <input type="text" class="form-control" id="edit-capacidad_ram" name="capacidad_ram"
+                                    data-dynamic />
+                            </div>
+
+                            <div id="edit-capacidad_disco-group" class="col-md-6 mb-3 d-none">
+                                <label for="edit-capacidad_disco" class="form-label">Capacidad Disco</label>
+                                <input type="text" class="form-control" id="edit-capacidad_disco" name="capacidad_disco"
+                                    data-dynamic />
+                            </div>
+
+                            <div id="edit-tipo_disco-group" class="col-md-6 mb-3 d-none">
+                                <label for="edit-tipo_disco" class="form-label">Tipo de disco</label>
+                                <select id="edit-tipo_disco" name="tipo_disco" class="form-select" data-dynamic>
+                                    <option value="">Seleccione</option>
+                                    <option value="Disco estado solido">Disco estado solido</option>
+                                    <option value="Disco estado mecanico">Disco estado mecanico</option>
+                                    <option value="N/A">No aplica</option>
+                                </select>
+                            </div>
+
+                            <div id="edit-sistema_operativo-group" class="col-md-6 mb-3 d-none">
+                                <label for="edit-sistema_operativo" class="form-label">Sistema Operativo</label>
+                                <input type="text" class="form-control" id="edit-sistema_operativo"
+                                    name="sistema_operativo" data-dynamic />
+                            </div>
+
+                            <div id="edit-pertenencia-group" class="col-md-6 mb-3 d-none">
+                                <label for="edit-pertenencia" class="form-label">Pertenencia</label>
+                                <select id="edit-pertenencia" name="pertenencia" class="form-select" data-dynamic>
+                                    <option value="">Seleccione</option>
+                                    <option value="Gestion Tic">Gestion Tic</option>
+                                    <option value="Contabilidad">Contabilidad</option>
+                                    <option value="Comunicaciones y Marca">Comunicaciones</option>
+                                    <option value="Proyectos">Proyectos</option>
+                                    <option value="Bienestar">Bienestar</option>
+                                    <option value="N/A">No aplica</option>
+                                </select>
+                            </div>
+
+                            <div id="edit-tonner_referencia-group" class="col-md-6 mb-3 d-none">
+                                <label for="edit-tonner_referencia" class="form-label">Tóner</label>
+                                <input type="text" class="form-control" id="edit-tonner_referencia"
+                                    name="tonner_referencia" data-dynamic />
+                            </div>
+
+                            <div id="edit-Multifuncional-group" class="col-md-6 mb-3 d-none">
+                                <label for="edit-Multifuncional" class="form-label">Multifuncional</label>
+                                <select id="edit-Multifuncional" name="Multifuncional" class="form-select" data-dynamic>
+                                    <option value="">Seleccione</option>
+                                    <option value="SI">Sí</option>
+                                    <option value="NO">No</option>
+                                </select>
+                            </div>
+
+                            <div id="edit-tipo_impresion-group" class="col-md-6 mb-3 d-none">
+                                <label for="edit-tipo_impresion" class="form-label">Tipo de Impresión</label>
+                                <select id="edit-tipo_impresion" name="tipo_impresion" class="form-select" data-dynamic>
+                                    <option value="">Seleccione</option>
+                                    <option value="COLOR">Color</option>
+                                    <option value="BLANCO Y NEGRO">Blanco y Negro</option>
+                                </select>
+                            </div>
+
+                            <div id="edit-tipo_tv-group" class="col-md-6 mb-3 d-none">
+                                <label for="edit-tipo_tv" class="form-label">Tipo de TV</label>
+                                <select id="edit-tipo_tv" name="tipo_tv" class="form-select" data-dynamic>
+                                    <option value="">Seleccione</option>
+                                    <option value="SMART TV">SMART TV</option>
+                                    <option value="ONE SCREEN">ONE SCREEN</option>
+                                    <option value="IPTV">IPTV</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-success w-100">Actualizar</button>
-                        </div>
                     </form>
+                </div>
+                <!-- Pie (footer) -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cerrar
+                    </button>
+                    <button type="submit" form="edit-product-form" class="btn btn-primary">
+                        Actualizar
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-<body>
-
-    <!-- SCRIPTS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!--    otstrap Bundle JS (incluye Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Tu archivo JavaScript -->
     <script src="./static/js/products.js"></script>
+
+    
+<script>
+  function exportToExcel() {
+    window.location.href = "/products/export/excel";
+  }
+</script>
 </body>
 
 </html>

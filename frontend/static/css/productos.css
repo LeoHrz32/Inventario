@@ -1,4 +1,6 @@
-/* Estilos generales */
+/* ==========================
+   FUENTES Y RESET BÁSICO
+   ========================== */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
 
 body {
@@ -13,7 +15,9 @@ body {
   overflow: hidden;
 }
 
-/* Navbar superior personalizado */
+/* ==========================
+   NAVBAR SUPERIOR
+   ========================== */
 .navbar-custom {
   background-color: #202b52;
   padding: 6px 15px;
@@ -49,14 +53,27 @@ body {
   color: #e4d5d5;
 }
 
+/* ==========================
+   CONTENIDO PRINCIPAL
+   ========================== */
 .main-content {
   margin-top: 60px;
-  padding: 20px;
+  padding: 10px 20px;
   width: 100%;
   overflow-y: auto;
   text-align: center;
 }
 
+h1 {
+  margin-top: 20px;
+  color: #202b52;
+  font-size: 28px;
+  text-align: center;
+}
+
+/* ==========================
+   BOTONES Y FORMULARIOS GENERALES
+   ========================== */
 #logout-btn {
   background-color: #f44336;
   border: none;
@@ -75,26 +92,20 @@ body {
   background-color: #d32f2f;
 }
 
-h1 {
-  margin-top: 30px;
-  color: #202b52;
-  font-size: 34px;
-  text-align: center;
-}
-
 .search-bar {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .search-input {
   padding: 8px;
-  width: 300px;
-  font-size: 16px;
-  border: 2px solid #ddd;
+  width: 250px;
+  font-size: 14px;
+  border: 1.5px solid #ddd;
   border-radius: 5px;
   text-align: center;
 }
@@ -122,6 +133,9 @@ h1 {
   background-color: rgba(169, 169, 236, 0.1);
 }
 
+/* ==========================
+   TABLAS
+   ========================== */
 .table-container {
   overflow-x: auto;
   width: 100%;
@@ -136,10 +150,11 @@ table#products-table {
 
 table#products-table th,
 table#products-table td {
-  padding: 12px;
+  padding: 10px;
   border: 1px solid #ddd;
   text-align: left;
   word-wrap: break-word;
+  font-size: 14px;
 }
 
 table#products-table th {
@@ -147,19 +162,23 @@ table#products-table th {
   color: white;
 }
 
+/* ==========================
+   PAGINACIÓN
+   ========================== */
 .paginator-container {
   text-align: center;
   margin-top: 20px;
 }
 
 .page-btn {
-  padding: 8px 15px;
-  margin: 0 10px;
+  padding: 6px 12px;
+  margin: 0 5px;
   background-color: #202b52;
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 5px;
+  font-size: 14px;
 }
 
 .page-btn:disabled {
@@ -167,28 +186,30 @@ table#products-table th {
   cursor: not-allowed;
 }
 
+/* ==========================
+   BOTONES DE ACCIÓN
+   ========================== */
 .action-cell {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .action-btn {
   display: flex;
   align-items: center;
-  padding: 5px 15px;
-  font-size: 16px;
+  padding: 5px 12px;
+  font-size: 14px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-right: -15px;
 }
 
 .action-btn i {
-  margin-right: 8px;
+  margin-right: 6px;
 }
 
 .edit-btn {
@@ -197,7 +218,7 @@ table#products-table th {
 }
 
 .edit-btn:hover {
-  background-color: #202b45;
+  background-color: #273b83;
 }
 
 .delete-btn {
@@ -209,6 +230,9 @@ table#products-table th {
   background-color: #e53935;
 }
 
+/* ==========================
+   SWEETALERT2 PERSONALIZADO
+   ========================== */
 .swal2-popup {
   border-radius: 12px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
@@ -216,13 +240,13 @@ table#products-table th {
 }
 
 .swal2-title {
-  font-size: 22px;
+  font-size: 20px;
   color: #333;
   font-weight: bold;
 }
 
 .swal2-content {
-  font-size: 16px;
+  font-size: 14px;
   color: #555;
 }
 
@@ -230,16 +254,16 @@ table#products-table th {
   background-color: rgb(255, 0, 0) !important;
   color: white !important;
   border-radius: 6px !important;
-  padding: 10px 20px !important;
-  font-size: 16px !important;
+  padding: 8px 18px !important;
+  font-size: 14px !important;
 }
 
 .swal2-cancel {
   background-color: #202b52 !important;
   color: white !important;
   border-radius: 6px !important;
-  padding: 10px 20px !important;
-  font-size: 16px !important;
+  padding: 8px 18px !important;
+  font-size: 14px !important;
 }
 
 .swal2-icon.swal2-warning {
@@ -261,18 +285,16 @@ table#products-table th {
   border-color: #d33 transparent transparent transparent !important;
 }
 
+/* ==========================
+   MODAL GENERAL
+   ========================== */
 .modal-dialog {
   max-width: 75%;
 }
 
-.bg-primary {
-  --bs-bg-opacity: 1;
-  background-color: #202b52 !important;
-}
-
 .modal-header {
   background-color: #343a40;
-  color: rgb(0, 0, 0);
+  color: #ffffff;
 }
 
 .modal-title {
@@ -282,124 +304,129 @@ table#products-table th {
 
 .modal-body {
   background-color: #ffffff;
+  padding: 10px 20px;
+}
+
+/* ==========================
+   FORMULARIO CAMPOS DINÁMICOS (2 columnas) 
+   Ajuste de espacios
+   ========================== */
+#dynamic-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 15px; /* espacio reducido entre filas y columnas */
+}
+
+#dynamic-fields > div {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0; /* elimina márgenes extra */
+}
+
+/* Etiquetas y controles más compactos */
+.form-label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #202b52;
+  font-size: 13px;
 }
 
 .form-control {
   background-color: #ffffff;
-  border: 1px solid #000000;
+  border: 1.5px solid #202b52;
   color: #000000;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .form-control:focus {
-  background-color: #ffffff;
   border-color: #17a2b8;
-  box-shadow: 0 0 5px rgba(23, 162, 184, 0.5);
+  box-shadow: 0 0 6px rgba(23, 162, 184, 0.5);
   outline: none;
 }
 
-.btn-success {
-  background-color: #202b52;
-  border: none;
-  font-weight: bold;
+/* ==========================
+   BOTONES DEL MODAL
+   ========================== */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 10px 20px;
+  background-color: #f7f7f7;
+  border-top: 1px solid #ddd;
 }
 
-.btn-success:hover {
+.btn-primary {
+  background-color: #202b52;
+  border: none;
+  font-weight: 700;
+  padding: 8px 20px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  color: white;
+  font-size: 14px;
+}
+
+.btn-primary:hover {
   background-color: #273b83;
 }
 
-.btn-close {
-  background-color: transparent;
+.btn-secondary {
+  background-color: #999;
   border: none;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
   color: white;
-  font-size: 1.2rem;
+  font-size: 14px;
 }
 
-.btn-close:hover {
-  color: #ff1100;
+.btn-secondary:hover {
+  background-color: #777;
 }
 
-/* Responsive completo */
+/* ==========================
+   RESPONSIVE
+   ========================== */
 @media (max-width: 768px) {
-  .navbar-custom {
-    flex-direction: column;
-    align-items: flex-start;
-    height: auto;
+  .modal-dialog {
+    max-width: 90%;
+  }
+
+  .modal-body {
     padding: 8px 10px;
   }
 
-  .navbar-custom .nav-links {
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-  }
-
-  .main-content {
-    margin-top: 60px;
-    padding: 20px 10px;
-    width: 100%;
-  }
-
-  h1 {
-    font-size: 22px;
-    margin-top: 20px;
-  }
-
-  .search-bar {
-    flex-direction: column;
-    gap: 10px;
-    padding: 0 10px;
+  #dynamic-fields {
+    grid-template-columns: 1fr !important; /* una columna en móvil */
+    gap: 8px 10px; /* menor espacio en móvil */
   }
 
   .search-input {
     width: 100%;
-    font-size: 14px;
   }
 
-  .search-btn,
-  .create-btn,
-  .page-btn {
-    width: 100%;
-    font-size: 14px;
-    padding: 10px;
-  }
-
-  .paginator-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .table-container {
-    overflow-x: auto;
-    width: 100%;
+  .navbar-custom .nav-links {
+    gap: 8px;
   }
 
   table#products-table {
-    min-width: 600px;
-    width: 100%;
+    min-width: 100%;
   }
 
   .action-cell {
-    flex-direction: column;
-    gap: 5px;
+    justify-content: center;
+    gap: 6px;
   }
 
-  .action-btn {
+  .btn-primary,
+  .btn-secondary {
     width: 100%;
-    padding: 8px 10px;
+    padding: 10px 0;
     font-size: 14px;
-    margin-right: 0;
-  }
-
-  .modal-dialog {
-    max-width: 95%;
-  }
-
-  .form-control {
-    font-size: 14px;
-  }
-
-  .swal2-popup {
-    width: 90% !important;
   }
 }

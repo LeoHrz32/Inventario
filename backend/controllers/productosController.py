@@ -19,11 +19,11 @@ class Product(BaseModel):
     tipo_disco: str
     capacidad_disco: str
     sistema_operativo: str
-    pulgadas: str
-    tonner_referencia: str
-    Multifuncional: str
-    tipo_impresion: str
-    tipo_tv: str
+    pulgadas: Optional[str] = None
+    tonner_referencia: Optional[str] = None
+    Multifuncional: Optional[str] = None
+    tipo_impresion: Optional[str] = None
+    tipo_tv: Optional[str] = None
     pertenencia: str
     categoria_id: int
     categoria_nombre: str
@@ -38,9 +38,9 @@ class ProductCreate(BaseModel):
     tipo_disco: str
     capacidad_disco: str
     sistema_operativo: str
-    pulgadas: Optional[str]
+    pulgadas: Optional[str] 
     tonner_referencia: Optional[str]
-    Multifuncional: Optional[bool]
+    Multifuncional: Optional[str]
     tipo_impresion: Optional[str]
     tipo_tv: Optional[str]
     pertenencia: str
@@ -58,7 +58,7 @@ class ProductUpdate(BaseModel):
     sistema_operativo: str
     pulgadas: Optional[str]
     tonner_referencia: Optional[str]
-    Multifuncional: Optional[bool]
+    Multifuncional: Optional[str]
     tipo_impresion: Optional[str]
     tipo_tv: Optional[str]
     pertenencia: str
@@ -77,12 +77,12 @@ async def get_product_create(
     sistema_operativo: str = Form(...),
     pulgadas: Optional[str] = Form(None),
     tonner_referencia: Optional[str] = Form(None),
-    Multifuncional: Optional[bool] = Form(None),
+    Multifuncional: Optional[str] = Form(None),
     tipo_impresion: Optional[str] = Form(None),
     tipo_tv: Optional[str] = Form(None),
     pertenencia: str = Form(...),
     categoria_id: int = Form(...)
-) -> ProductCreate:
+) -> ProductCreate: 
     return ProductCreate(
         nombre=nombre,
         marca=marca,
@@ -114,7 +114,7 @@ async def get_product_update(
     sistema_operativo: str = Form(...),
     pulgadas: Optional[str] = Form(None),
     tonner_referencia: Optional[str] = Form(None),
-    Multifuncional: Optional[bool] = Form(None),
+    Multifuncional: Optional[str] = Form(None),
     tipo_impresion: Optional[str] = Form(None),
     tipo_tv: Optional[str] = Form(None),
     pertenencia: str = Form(...),
@@ -146,8 +146,13 @@ def get_product(product_id: int) -> Product:
     cursor = conn.cursor(dictionary=True)
     cursor.execute(
         """
-        SELECT *,
-               c.nombre AS categoria_nombre
+        SELECT
+          p.id, p.nombre, p.marca, p.serial, p.procesador, p.modelo,
+          p.capacidad_ram, p.tipo_disco, p.capacidad_disco,
+          p.sistema_operativo, p.pulgadas, p.tonner_referencia,
+          p.Multifuncional, p.tipo_impresion, p.tipo_tv,
+          p.pertenencia, p.categoria_id,
+          c.nombre AS categoria_nombre
         FROM productos p
         JOIN categoria c ON p.categoria_id = c.id
         WHERE p.id = %s
@@ -193,7 +198,7 @@ def add_product(
     sistema_operativo: str,
     pulgadas: Optional[str],
     tonner_referencia: Optional[str],
-    Multifuncional: Optional[bool],
+    Multifuncional: Optional[str],
     tipo_impresion: Optional[str],
     tipo_tv: Optional[str],
     pertenencia: str,

@@ -1,0 +1,472 @@
+/* ==============================================
+   1. Estilos generales (sin overflow:hidden en body)
+============================================== */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+
+body {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  /* Eliminado overflow: hidden; para permitir scroll en modales */
+  /* overflow: hidden; */
+}
+
+/* Navbar superior personalizado */
+.navbar-custom {
+  background-color: #202b52;
+  padding: 6px 15px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1030;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+}
+.navbar-custom .nav-links {
+  display: flex;
+  gap: 18px;
+}
+.navbar-custom a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.3s;
+}
+.navbar-custom a:hover {
+  color: #e4d5d5;
+}
+#logout-btn {
+  background-color: #f44336;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.3s;
+}
+#logout-btn:hover {
+  background-color: #d32f2f;
+}
+
+/* Contenido principal */
+.main-content {
+  margin-top: 60px;
+  padding: 20px;
+  width: 100%;
+  overflow-y: auto;
+  text-align: center;
+}
+
+/* ---------------------------------------------
+   6. Título h1 responsive (consolidado)
+---------------------------------------------- */
+h1 {
+  font-size: 34px;
+  line-height: 1.2;
+  margin-top: 0; /* eliminado margin-top para confiar en .main-content */
+  color: #202b52;
+  text-align: center;
+}
+
+/* Pantallas medianas (≤ 992px) */
+@media (max-width: 992px) {
+  h1 {
+    font-size: 28px;
+  }
+}
+
+/* Pantallas pequeñas (≤ 768px) */
+@media (max-width: 768px) {
+  /* Ajustar margen superior de main-content para navbar más alto */
+  .main-content {
+    margin-top: 100px;
+  }
+  h1 {
+    font-size: 22px;
+  }
+}
+
+/* Pantallas extra pequeñas (≤ 576px) */
+@media (max-width: 576px) {
+  h1 {
+    font-size: 18px;
+  }
+}
+
+/* Barra de búsqueda y acciones */
+.search-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.search-input {
+  padding: 8px;
+  width: 300px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  text-align: center;
+}
+.search-btn {
+  padding: 8px 15px;
+  background-color: #202b52;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.create-btn {
+  padding: 8px 15px;
+  background-color: transparent;
+  color: black;
+  border: 2px solid #202b52;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.create-btn:hover {
+  background-color: rgba(169, 169, 236, 0.1);
+}
+
+/* Tabla de productos */
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+}
+table#products-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  min-width: 600px;
+}
+table#products-table th,
+table#products-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  word-wrap: break-word;
+}
+table#products-table th {
+  background-color: #202b52;
+  color: white;
+}
+
+/* Paginación */
+.paginator-container {
+  text-align: center;
+  margin-top: 20px;
+}
+.page-btn {
+  padding: 8px 15px;
+  margin: 0 10px;
+  background-color: #202b52;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.page-btn:disabled {
+  background-color: #dcdcdc;
+  cursor: not-allowed;
+}
+
+/* Botones de acción */
+.action-cell {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.action-btn {
+  display: flex;
+  align-items: center;
+  padding: 5px 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: -15px;
+}
+.action-btn i {
+  margin-right: 8px;
+}
+.edit-btn {
+  background-color: #202b52;
+  color: white;
+}
+.edit-btn:hover {
+  background-color: #202b45;
+}
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}
+.delete-btn:hover {
+  background-color: #e53935;
+}
+
+/* SweetAlert2 */
+.swal2-popup {
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  background-color: #ffffff;
+}
+.swal2-title {
+  font-size: 22px;
+  color: #333;
+  font-weight: bold;
+}
+.swal2-content {
+  font-size: 16px;
+  color: #555;
+}
+.swal2-confirm {
+  background-color: rgb(255, 0, 0) !important;
+  color: white !important;
+  border-radius: 6px !important;
+  padding: 10px 20px !important;
+  font-size: 16px !important;
+}
+.swal2-cancel {
+  background-color: #202b52 !important;
+  color: white !important;
+  border-radius: 6px !important;
+  padding: 10px 20px !important;
+  font-size: 16px !important;
+}
+.swal2-icon.swal2-warning {
+  color: #202b52;
+  border-color: #202b52;
+}
+.swal2-icon.swal2-success {
+  color: #28a745;
+  border-color: #28a745;
+}
+.swal2-icon.swal2-error {
+  color: #d9534f;
+  border-color: #d9534f;
+}
+.swal2-loader {
+  border-color: #d33 transparent transparent transparent !important;
+}
+
+/* ==============================================
+   2. Ajustes para modal scrollable completo
+============================================== */
+/* 2.1. Ajustar ancho y márgenes de modal-dialog */
+.modal-dialog {
+  max-width: 90%;      /* Ajusta bien en pantallas medianas */
+  margin: 1.75rem auto; /* Separación superior/inferior estándar */
+}
+
+/* 2.2. Forzar que modal-content tenga máximo de altura */
+.modal-dialog-scrollable .modal-content {
+  /* Altura total menos aproximado de header (56px) y footer (56px) */
+  max-height: calc(100vh - 3.5rem);
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.5rem;
+}
+
+/* 2.3. Header y footer conservan su altura natural */
+.modal-dialog-scrollable .modal-header,
+.modal-dialog-scrollable .modal-footer {
+  flex: 0 0 auto;
+  padding: 0.75rem 1rem;
+}
+
+/* 2.4. Modal-body ocupa espacio restante y es scrollable */
+.modal-dialog-scrollable .modal-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 1rem;
+  background-color: #ffffff;
+}
+
+/* 2.5. Mantener colores de header (bg-primary) */
+.modal-header.bg-primary {
+  background-color: #202b52 !important;
+  color: white;
+}
+
+/* 2.6. Mantener botón cerrar (btn-close) con color blanco */
+.modal-header .btn-close {
+  filter: invert(1);
+}
+
+/* 2.7. Cuando modal está abierto, permitir scroll en body */
+.modal-open {
+  overflow-y: auto;
+}
+
+/* Estilos de campos dentro del modal */
+.form-control {
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  color: #000000;
+}
+.form-control:focus {
+  background-color: #ffffff;
+  border-color: #17a2b8;
+  box-shadow: 0 0 5px rgba(23, 162, 184, 0.5);
+  outline: none;
+}
+
+/* Botones dentro del modal */
+.btn-primary {
+  background-color: #202b52 !important;
+  border: none;
+  font-weight: bold;
+  color: white !important;
+}
+.btn-primary:hover {
+  background-color: #273b83 !important;
+}
+
+/* ==============================================
+   3. Responsive (≤ 768px)
+============================================== */
+@media (max-width: 768px) {
+  /* 3.1. Navbar en columna */
+  .navbar-custom {
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    padding: 8px 10px;
+  }
+  .navbar-custom .nav-links {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  /* 3.2. Ajustes main-content ya aplicado más arriba */
+
+  /* 3.3. Ajustes modal en móvil */
+  .modal-dialog {
+    max-width: 100%;
+    margin: 0.25rem auto;
+  }
+  .modal-dialog-scrollable .modal-content {
+    max-height: calc(100vh - 2rem);
+    border-radius: 0;
+  }
+  .modal-header,
+  .modal-footer {
+    padding: 0.5rem 0.75rem;
+  }
+  .modal-body {
+    padding: 0.75rem;
+    overflow-y: auto;
+  }
+  .modal-body .form-control,
+  .modal-body .form-select {
+    font-size: 14px;
+    padding: 6px 8px;
+  }
+  .modal-body .row.g-3 > [class*="col-"] {
+    margin-bottom: 10px;
+  }
+  .swal2-popup {
+    width: 90% !important;
+  }
+}
+
+/* ---------------------------------------------
+   4. Colores personalizados para el modal
+   (sin modificar la estructura HTML)
+--------------------------------------------- */
+
+/* 4.1. Color de fondo y texto del header */
+.modal-header {
+  background-color: #202b52 !important; /* Azul oscuro */
+  color: #ffffff !important;            /* Texto blanco */
+}
+
+/* 4.2. Color de fondo del body (opcional) */
+.modal-body {
+  background-color: #f7f9fc !important; /* Fondo muy claro */
+  color: #202b52 !important;            /* Texto azul oscuro */
+}
+
+/* 4.3. Botón de cerrar (btn-close) */
+.modal-header .btn-close {
+  background-color: transparent !important;
+  border: 2px solid #ffffff !important;
+  border-radius: 50% !important;
+  width: 1.25rem;
+  height: 1.25rem;
+  opacity: 1;
+}
+.modal-header .btn-close::before,
+.modal-header .btn-close::after {
+  background-color: #ffffff; /* cruces blancas */
+}
+
+/* 4.4. Hover del botón de cerrar */
+.modal-header .btn-close:hover {
+  background-color: #ffffff !important;
+}
+.modal-header .btn-close:hover::before,
+.modal-header .btn-close:hover::after {
+  background-color: #202b52; /* cruces azules al pasar el cursor */
+}
+
+/* ---------------------------------------------
+   5. Ajustes específicos si el modal tiene sombra o bordes
+--------------------------------------------- */
+
+/* 5.1. Agregar borde suave al contenedor principal */
+.modal-content {
+  border: 2px solid #202b52 !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 5.2. Asegurar legibilidad de inputs dentro del body */
+.modal-body .form-control,
+.modal-body .form-select {
+  background-color: #ffffff !important;
+  color: #202b52 !important;
+  border: 1px solid #202b52 !important;
+}
+
+/* 5.3. Botones de acción dentro del footer */
+.modal-footer .btn-primary {
+  background-color: #202b52 !important;
+  border: 1px solid #ffffff !important;
+  color: #ffffff !important;
+}
+.modal-footer .btn-primary:hover {
+  background-color: #343f71 !important;
+}
+
+/* 5.4. Si el modal contiene un botón secundario */
+.modal-footer .btn-secondary {
+  background-color: #f0f0f0 !important;
+  border: 1px solid #202b52 !important;
+  color: #202b52 !important;
+}
+.modal-footer .btn-secondary:hover {
+  background-color: #e0e4ec !important;
+}

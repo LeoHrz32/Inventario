@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function fetchCategorias(page = 1) {
   try {
     const resp = await fetch(
-      `http://10.1.1.89:8100/categorias_paginated?page=${page}&per_page=${categoriasPerPage}`
+      `http://10.1.1.89:8200/categorias_paginated?page=${page}&per_page=${categoriasPerPage}`
     );
     if (!resp.ok) throw new Error("Error al obtener los datos.");
     const data = await resp.json();
@@ -87,7 +87,7 @@ async function searchCategorias() {
   if (!q) return renderCategorias(currentPage);
   try {
     const resp = await fetch(
-      `http://10.1.1.89:8100/categorias_search?query=${encodeURIComponent(q)}`
+      `http://10.1.1.89:8200/categorias_search?query=${encodeURIComponent(q)}`
     );
     if (!resp.ok) throw new Error();
     const data = await resp.json();
@@ -126,7 +126,7 @@ function handleCategoriaModal() {
       descripcion: document.getElementById("descripcion").value
     };
     try {
-      const resp = await fetch("http://10.1.1.89:8100/categorias/", {
+      const resp = await fetch("http://10.1.1.89:8200/categorias/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -153,7 +153,7 @@ function handleCategoriaModal() {
 }
 
 function editCategoria(id) {
-  fetch(`http://10.1.1.89:8100/categoriaById/${id}`)
+  fetch(`http://10.1.1.89:8200/categoriaById/${id}`)
     .then((r) => {
       if (!r.ok) throw new Error();
       return r.json();
@@ -170,7 +170,7 @@ function editCategoria(id) {
         e.preventDefault();
         const formData = new FormData(e.target);
         try {
-          const resp = await fetch(`http://10.1.1.89:8100/categoriasUpdate/${id}`, {
+          const resp = await fetch(`http://10.1.1.89:8200/categoriasUpdate/${id}`, {
             method: "PUT",
             body: formData,
           });
