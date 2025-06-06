@@ -335,7 +335,7 @@ function handleCategoriaChange(selectEl, formType = "create") {
       "capacidad_ram",
       "sistema_operativo",
       "pertenencia",
-      "modelo",
+      "modelo"
     ], // PORTÁTILES
     2: [
       "nombre",

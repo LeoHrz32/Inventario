@@ -107,11 +107,7 @@
                                 <input type="text" class="form-control" id="marca" name="marca" data-dynamic />
                             </div>
 
-                            <!-- Serial -->
-                            <div id="create-serial-group" class="col-md-6 mb-3 d-none">
-                                <label for="serial" class="form-label">Serial</label>
-                                <input type="text" class="form-control" id="serial" name="serial" data-dynamic />
-                            </div>
+
 
                             <!-- Pulgadas -->
                             <div id="create-pulgadas-group" class="col-md-6 mb-3 d-none">
@@ -168,7 +164,7 @@
                                     <option value="Comunicaciones y Marca">Comunicaciones</option>
                                     <option value="Proyectos">Proyectos</option>
                                     <option value="Bienestar">Bienestar</option>
-                                    <option value="N/A">No aplica</option>
+                                    <option value="No asignado">No asignado</option>
                                 </select>
                             </div>
 
@@ -214,6 +210,11 @@
                                     <option value="ONE SCREEN">ONE SCREEN</option>
                                     <option value="IPTV">IPTV</option>
                                 </select>
+                            </div>
+                            <!-- Serial -->
+                            <div id="create-serial-group" class="col-md-6 mb-3 d-none">
+                                <label for="serial" class="form-label">Serial</label>
+                                <input type="text" class="form-control" id="serial" name="serial" data-dynamic />
                             </div>
                         </div>
                     </form>
@@ -270,11 +271,7 @@
                                 <input type="text" class="form-control" id="edit-modelo" name="modelo" required
                                     data-dynamic />
                             </div>
-                            <div class="col-md-6">
-                                <label for="edit-serial" class="form-label">Serial</label>
-                                <input type="text" class="form-control" id="edit-serial" name="serial" required
-                                    data-dynamic />
-                            </div>
+
 
                             <!-- Campos dinámicos en edición: TODOS llevan data-dynamic y su DIV con id="edit-<campo>-group" -->
                             <div id="edit-nombre-group" class="col-md-6 mb-3 d-none">
@@ -331,7 +328,7 @@
                                     <option value="Comunicaciones y Marca">Comunicaciones</option>
                                     <option value="Proyectos">Proyectos</option>
                                     <option value="Bienestar">Bienestar</option>
-                                    <option value="N/A">No aplica</option>
+                                    <option value="No asignado">No asignado</option>
                                 </select>
                             </div>
 
@@ -368,6 +365,11 @@
                                     <option value="IPTV">IPTV</option>
                                 </select>
                             </div>
+                            <div class="col-md-6">
+                                <label for="edit-serial" class="form-label">Serial</label>
+                                <input type="text" class="form-control" id="edit-serial" name="serial" required
+                                    data-dynamic />
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -391,12 +393,12 @@
     <!-- Tu archivo JavaScript -->
     <script src="./static/js/products.js"></script>
 
-    
-<script>
-  function exportToExcel() {
-    window.location.href = "/products/export/excel";
-  }
-</script>
+
+    <script>
+        function exportToExcel() {
+            window.location.href = "/products/export/excel";
+        }
+    </script>
 </body>
 
 </html>
