@@ -334,7 +334,6 @@ document.getElementById("btn-agregar-campo").addEventListener("click", () => {
   cont.appendChild(div);
 });
 
-// DELETE /tablas/{tabla}
 window.deleteTabla = function (nombre) {
   Swal.fire({
     icon: "warning",
@@ -344,26 +343,15 @@ window.deleteTabla = function (nombre) {
     confirmButtonText: "Sí, eliminar",
     cancelButtonText: "Cancelar",
   }).then(async (result) => {
-    if (!result.isConfirmed) return;
-    try {
-      const resp = await fetch(`/tablas/${encodeURIComponent(nombre)}`, {
-        method: "DELETE",
-      });
-      if (!resp.ok) throw new Error();
-      Swal.fire({
-        icon: "success",
-        title: "Eliminado",
-        text: "Tabla eliminada.",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-      renderTablas(paginaActual);
-    } catch {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo eliminar.",
-      });
+    if (result.isConfirmed) {
+      try {
+        const resp = await fetch(`/tablasDelete/${encodeURIComponent(nombre)}`, { method: "DELETE" });
+        if (!resp.ok) throw new Error();
+        Swal.fire({ icon: "success", title: "Eliminado", text: "Tabla de inventario eliminada.", timer: 1500, showConfirmButton: false });
+        renderTablas(paginaActual);
+      } catch {
+        Swal.fire({ icon: "error", title: "Error", text: "No se pudo eliminar." });
+      }
     }
   });
 };
