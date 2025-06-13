@@ -77,20 +77,28 @@ async function renderProducts(page) {
   products.forEach((p) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-          <td>${p.categoria_nombre}</td>
-          <td>${p.serial}</td>
-          <td>${p.nombre}</td>
-          <td>${p.marca}</td>
-          <td>${p.pertenencia}</td>
-          <td class="d-flex gap-2">
-            <button class="btn btn-sm btn-outline-primary" onclick="editProduct(${p.id})">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${p.id})">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          </td>
-        `;
+      <td>${p.categoria_nombre}</td>
+      <td>${p.serial}</td>
+      <td>${p.nombre}</td>
+      <td>${p.marca}</td>
+      <td>${p.pertenencia}</td>
+      <td class="d-flex gap-2">
+        <button 
+  class="btn btn-outline-info btn-sm me-1" 
+  onclick="viewProduct(${p.id})"
+  data-bs-toggle="tooltip" 
+  title="Ver detalles del producto"
+>
+  <i class="fas fa-info-circle"></i> Detalles
+</button>
+        <button class="btn btn-sm btn-outline-primary" onclick="editProduct(${p.id})">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${p.id})">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </td>
+    `;
     tbody.appendChild(tr);
   });
 
@@ -127,16 +135,22 @@ async function searchProducts() {
     data.products.forEach((p) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-            <td>${p.categoria_nombre}</td>
-            <td>${p.serial}</td>
-            <td>${p.nombre}</td>
-            <td>${p.marca}</td>
-            <td>${p.pertenencia}</td>
-            <td class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-primary" onclick="editProduct(${p.id})"><i class="fas fa-edit"></i></button>
-              <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${p.id})"><i class="fas fa-trash-alt"></i></button>
-            </td>
-          `;
+        <td>${p.categoria_nombre}</td>
+        <td>${p.serial}</td>
+        <td>${p.nombre}</td>
+        <td>${p.marca}</td>
+        <td>${p.pertenencia}</td>
+        <td class="d-flex gap-2">
+          <!-- AGREGADO: Botón “Ver” con ${p.id} -->
+          <button class="btn btn-info btn-sm me-1" onclick="viewProduct(${p.id})">Ver</button>
+          <button class="btn btn-sm btn-outline-primary" onclick="editProduct(${p.id})">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${p.id})">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </td>
+      `;
       tbody.appendChild(tr);
     });
 
@@ -335,7 +349,8 @@ function handleCategoriaChange(selectEl, formType = "create") {
       "capacidad_ram",
       "sistema_operativo",
       "pertenencia",
-      "modelo"
+      "responsable",
+      "modelo",
     ], // PORTÁTILES
     2: [
       "nombre",
@@ -349,8 +364,8 @@ function handleCategoriaChange(selectEl, formType = "create") {
       "pertenencia",
       "modelo",
     ], // TODO EN UNO
-    3: ["nombre", "marca", "pulgadas", "serial", "pertenencia"], // MONITORES
-    4: ["serial", "marca", "pulgadas", "tipo_tv", "pertenencia"], // TELEVISORES
+    3: ["nombre", "marca", "pulgadas", "serial", "pertenencia", "responsable"], // MONITORES
+    4: ["serial", "marca", "pulgadas", "tipo_tv", "pertenencia", "responsable"], // TELEVISORES
     5: [
       "nombre",
       "marca",
@@ -360,6 +375,7 @@ function handleCategoriaChange(selectEl, formType = "create") {
       "Multifuncional",
       "tipo_impresion",
       "pertenencia",
+      "responsable",
     ], // IMPRESORAS
   };
 
@@ -379,6 +395,7 @@ function handleCategoriaChange(selectEl, formType = "create") {
     "tonner_referencia",
     "Multifuncional",
     "tipo_impresion",
+    "responsable",
   ];
 
   // Oculte todo primero
@@ -409,6 +426,7 @@ function handleCategoriaChangeSimulado(categoriaId, formType = "edit") {
       "sistema_operativo",
       "pertenencia",
       "modelo",
+      "responsable",
     ], // PORTÁTILES
     2: [
       "nombre",
@@ -421,9 +439,10 @@ function handleCategoriaChangeSimulado(categoriaId, formType = "edit") {
       "sistema_operativo",
       "pertenencia",
       "modelo",
+      "responsable",
     ], // TODO EN UNO
-    3: ["nombre", "marca", "pulgadas", "serial", "pertenencia"], // MONITORES
-    4: ["serial", "marca", "pulgadas", "tipo_tv", "pertenencia"], // TELEVISORES
+    3: ["nombre", "marca", "pulgadas", "serial", "pertenencia", "responsable"], // MONITORES
+    4: ["serial", "marca", "pulgadas", "tipo_tv", "pertenencia", "responsable"], // TELEVISORES
     5: [
       "nombre",
       "marca",
@@ -433,6 +452,7 @@ function handleCategoriaChangeSimulado(categoriaId, formType = "edit") {
       "Multifuncional",
       "tipo_impresion",
       "pertenencia",
+      "responsable",
     ], // IMPRESORAS
   };
 
@@ -452,6 +472,7 @@ function handleCategoriaChangeSimulado(categoriaId, formType = "edit") {
     "tonner_referencia",
     "Multifuncional",
     "tipo_impresion",
+    "responsable",
   ];
 
   // Oculte todo primero
@@ -486,6 +507,7 @@ function hideAllDynamicFields(formType = "create") {
     "tonner_referencia",
     "Multifuncional",
     "tipo_impresion",
+    "responsable",
   ];
   todosLosCampos.forEach((campo) => {
     const campoDiv = document.getElementById(`${formType}-${campo}-group`);
@@ -534,7 +556,65 @@ function toggleFieldsByCategory(category) {
   });
 }
 
-// ─── 9) Cerrar Sesión ─────────────────────────────────────────────────────────────────────
+function viewProduct(id) {
+  // Llamamos al endpoint que devolvió JSON para este producto
+  fetch(`/api/products/${id}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Producto no encontrado");
+      }
+      return response.json();
+    })
+    .then((product) => {
+      // 2) Llenamos cada campo del modal con la info recibida
+      document.getElementById("detail-id").innerText = product.id;
+      document.getElementById("detail-categoria_nombre").innerText =
+        product.categoria_nombre;
+      document.getElementById("detail-nombre").innerText = product.nombre;
+      document.getElementById("detail-marca").innerText =
+        product.marca || "No especificada";
+      document.getElementById("detail-serial").innerText =
+        product.serial || "No especificado";
+      document.getElementById("detail-procesador").innerText =
+        product.procesador || "No especificado";
+      document.getElementById("detail-modelo").innerText =
+        product.modelo || "No especificado";
+      document.getElementById("detail-capacidad_ram").innerText =
+        product.capacidad_ram || "No especificada";
+      document.getElementById("detail-tipo_disco").innerText =
+        product.tipo_disco || "No especificado";
+      document.getElementById("detail-capacidad_disco").innerText =
+        product.capacidad_disco || "No especificada";
+      document.getElementById("detail-sistema_operativo").innerText =
+        product.sistema_operativo || "No especificado";
+      document.getElementById("detail-pulgadas").innerText =
+        product.pulgadas || "No aplica";
+      document.getElementById("detail-tonner_referencia").innerText =
+        product.tonner_referencia || "No aplica";
+      document.getElementById("detail-Multifuncional").innerText =
+        product.Multifuncional || "No aplica";
+      document.getElementById("detail-tipo_impresion").innerText =
+        product.tipo_impresion || "No aplica";
+      document.getElementById("detail-tipo_tv").innerText =
+        product.tipo_tv || "No aplica";
+      document.getElementById("detail-pertenencia").innerText =
+        product.pertenencia || "No asignada";
+      document.getElementById("detail-responsable").innerText =
+        product.responsable || "No asignado";
+
+      // 3) Una vez llenados los campos, mostramos el modal con Bootstrap 5:
+      const detailModal = new bootstrap.Modal(
+        document.getElementById("detailProductModal")
+      );
+      detailModal.show();
+    })
+    .catch((err) => {
+      console.error(err);
+      alert("No se pudo cargar el detalle del producto.");
+    });
+}
+
+// ─── 10) Cerrar Sesión ─────────────────────────────────────────────────────────────────────
 async function logout() {
   const r = await fetch("/logout", { method: "POST" });
   if (r.ok) window.location.href = "/";

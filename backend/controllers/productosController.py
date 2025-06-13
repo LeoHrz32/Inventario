@@ -25,6 +25,7 @@ class Product(BaseModel):
     tipo_impresion: Optional[str] = None
     tipo_tv: Optional[str] = None
     pertenencia: str
+    responsable: str
     categoria_id: int
     categoria_nombre: str
 
@@ -44,6 +45,7 @@ class ProductCreate(BaseModel):
     tipo_impresion: Optional[str]
     tipo_tv: Optional[str]
     pertenencia: str
+    responsable: str
     categoria_id: int
 
 class ProductUpdate(BaseModel):
@@ -62,6 +64,7 @@ class ProductUpdate(BaseModel):
     tipo_impresion: Optional[str]
     tipo_tv: Optional[str]
     pertenencia: str
+    responsable: str
     categoria_id: int
 
 # Dependencies for FastAPI form data
@@ -81,6 +84,7 @@ async def get_product_create(
     tipo_impresion: Optional[str] = Form(None),
     tipo_tv: Optional[str] = Form(None),
     pertenencia: str = Form(...),
+    responsable: str = Form(...),
     categoria_id: int = Form(...)
 ) -> ProductCreate: 
     return ProductCreate(
@@ -99,6 +103,7 @@ async def get_product_create(
         tipo_impresion=tipo_impresion,
         tipo_tv=tipo_tv,
         pertenencia=pertenencia,
+        responsable=responsable,
         categoria_id=categoria_id
     )
 
@@ -118,6 +123,7 @@ async def get_product_update(
     tipo_impresion: Optional[str] = Form(None),
     tipo_tv: Optional[str] = Form(None),
     pertenencia: str = Form(...),
+    responsable: str = Form(...),
     categoria_id: int = Form(...)
 ) -> ProductUpdate:
     return ProductUpdate(
@@ -136,6 +142,7 @@ async def get_product_update(
         tipo_impresion=tipo_impresion,
         tipo_tv=tipo_tv,
         pertenencia=pertenencia,
+        responsable=responsable,
         categoria_id=categoria_id
     )
 
@@ -151,7 +158,7 @@ def get_product(product_id: int) -> Product:
           p.capacidad_ram, p.tipo_disco, p.capacidad_disco,
           p.sistema_operativo, p.pulgadas, p.tonner_referencia,
           p.Multifuncional, p.tipo_impresion, p.tipo_tv,
-          p.pertenencia, p.categoria_id,
+          p.pertenencia,p.responsable, p.categoria_id,
           c.nombre AS categoria_nombre
         FROM productos p
         JOIN categoria c ON p.categoria_id = c.id
@@ -166,6 +173,30 @@ def get_product(product_id: int) -> Product:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     return Product(**row)
 
+def build_product_detail(product: Product) -> dict:
+    return {
+        "ID": product.id,
+        "Nombre": product.nombre,
+        "Marca": product.marca or "No especificada",
+        "Serial": product.serial or "No especificado",
+        "Procesador": product.procesador or "No especificado",
+        "Modelo": product.modelo or "No especificado",
+        "Capacidad de RAM": product.capacidad_ram or "No especificada",
+        "Tipo de Disco": product.tipo_disco or "No especificado",
+        "Capacidad de Disco": product.capacidad_disco or "No especificada",
+        "Sistema Operativo": product.sistema_operativo or "No especificado",
+        "Pulgadas": product.pulgadas or "No especificadas",
+        "Toner / Referencia": product.tonner_referencia or "No especificado",
+        "Multifuncional": product.Multifuncional or "No aplica",
+        "Tipo de Impresión": product.tipo_impresion or "No especificado",
+        "Tipo de TV": product.tipo_tv or "No aplica",
+        "Pertenencia": product.pertenencia or "No especificada",
+        "Responsable": product.responsable or "No asignado",
+        "Categoría": product.categoria_nombre
+    }
+
+
+
 def get_products() -> List[Product]:
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
@@ -175,7 +206,7 @@ def get_products() -> List[Product]:
         p.capacidad_ram, p.tipo_disco, p.capacidad_disco,
         p.sistema_operativo, p.pulgadas, p.tonner_referencia,
         p.Multifuncional, p.tipo_impresion, p.tipo_tv,
-        p.pertenencia, p.categoria_id,
+        p.pertenencia,p.responsable, p.categoria_id,
         c.nombre AS categoria_nombre
       FROM productos p
       JOIN categoria c ON p.categoria_id = c.id
@@ -202,6 +233,7 @@ def add_product(
     tipo_impresion: Optional[str],
     tipo_tv: Optional[str],
     pertenencia: str,
+    responsable: str,
     categoria_id: int
 ) -> dict:
     conn = get_db()
@@ -232,15 +264,15 @@ def add_product(
            capacidad_ram, tipo_disco, capacidad_disco,
            sistema_operativo, pulgadas, tonner_referencia,
            Multifuncional, tipo_impresion, tipo_tv,
-           pertenencia, categoria_id)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+           pertenencia,responsable,categoria_id)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """,
         (
             nombre, marca, serial, procesador, modelo,
             capacidad_ram, tipo_disco, capacidad_disco,
             sistema_operativo, pulgadas, tonner_referencia,
             Multifuncional, tipo_impresion, tipo_tv,
-            pertenencia, categoria_id
+            pertenencia,responsable, categoria_id
         )
     )
     conn.commit()
@@ -265,6 +297,7 @@ def update_product(
     tipo_impresion: Optional[str],
     tipo_tv: Optional[str],
     pertenencia: str,
+    responsable:str,
     categoria_id: int
 ) -> dict:
     conn = get_db()
@@ -295,7 +328,7 @@ def update_product(
             modelo=%s, capacidad_ram=%s, tipo_disco=%s,
             capacidad_disco=%s, sistema_operativo=%s,
             pulgadas=%s, tonner_referencia=%s, Multifuncional=%s,
-            tipo_impresion=%s, tipo_tv=%s, pertenencia=%s,
+            tipo_impresion=%s, tipo_tv=%s, pertenencia=%s,responsable=%s,
             categoria_id=%s
         WHERE id=%s
         """,
@@ -304,7 +337,7 @@ def update_product(
             capacidad_ram, tipo_disco, capacidad_disco,
             sistema_operativo, pulgadas, tonner_referencia,
             Multifuncional, tipo_impresion, tipo_tv,
-            pertenencia, categoria_id,
+            pertenencia,responsable, categoria_id,
             product_id
         )
     )

@@ -9,6 +9,8 @@ from routes.userRoutes import router as user_router
 from routes.categoriaRoutes import router as categoria_router
 
 from routes.productosRoutes import router as productos_router
+from routes.configRoutes import router as config_router
+
 
 from storage import get_db
 
@@ -34,6 +36,7 @@ app.mount(
 app.include_router(user_router)
 app.include_router(categoria_router)
 app.include_router(productos_router)
+app.include_router(config_router)
 
 
 # Login page

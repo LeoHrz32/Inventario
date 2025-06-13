@@ -7,12 +7,22 @@ from openpyxl import Workbook
 
 from controllers.productosController import (
     ProductCreate, ProductUpdate,
+    Product,
     get_product, get_products,
     add_product, update_product,
     delete_product,get_product_create, get_product_update
 )
 
 router = APIRouter()
+
+@router.get("/api/products/{product_id}", response_model=Product)
+async def get_product_json(product_id: int):
+    product = get_product(product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
+    return product  # FastAPI serializará a JSON
+
+
 
 @router.get("/products", response_class=HTMLResponse)
 async def list_products():
@@ -37,6 +47,7 @@ async def list_products():
         f"<td>{p.tipo_impresion or ''}</td>"
         f"<td>{p.tipo_tv or ''}</td>"
         f"<td>{p.pertenencia}</td>"
+        f"<td>{p.responsable}</td>"
         f"<td>"
         f"  <button onclick='editProduct({p.id})'>Editar</button>"
         f"  <button onclick='deleteProduct({p.id})'>Eliminar</button>"
@@ -78,6 +89,7 @@ async def list_products_paginated(
         "total_pages": total_pages
     }
 
+
 @router.get("/products_search")
 async def search_products(query: str = Query(..., alias="query")):
     query_lower = query.lower()
@@ -99,6 +111,8 @@ async def search_products(query: str = Query(..., alias="query")):
         or query_lower in str(p.tipo_impresion or '').lower()
         or query_lower in str(p.tipo_tv or '').lower()
         or query_lower in str(p.pertenencia).lower()
+        or query_lower in str(p.responsable).lower()
+        
     ]
     return {"products": [p.dict() for p in results]}
 
@@ -119,7 +133,7 @@ async def create_product(
         prod.capacidad_disco, prod.sistema_operativo,
         prod.pulgadas, prod.tonner_referencia, prod.Multifuncional,
         prod.tipo_impresion, prod.tipo_tv,
-        prod.pertenencia, prod.categoria_id
+        prod.pertenencia,prod.responsable, prod.categoria_id
     )
     if res["success"]:
         return {"message": res["message"]}
@@ -136,7 +150,7 @@ async def update_product_route(
         prod.capacidad_disco, prod.sistema_operativo,
         prod.pulgadas, prod.tonner_referencia, prod.Multifuncional,
         prod.tipo_impresion, prod.tipo_tv,
-        prod.pertenencia, prod.categoria_id
+        prod.pertenencia,prod.responsable, prod.categoria_id
     )
     if res["success"]:
         return {"message": res["message"]}
@@ -156,7 +170,7 @@ async def export_products_excel():
         "ID", "Categoría", "Nombre", "Marca", "Serial", "Procesador", "Modelo",
         "Capacidad RAM", "Tipo Disco", "Capacidad Disco", "Sistema Operativo",
         "Pulgadas", "Tonner Referencia", "Multifuncional", "Tipo Impresión",
-        "Tipo TV", "Pertenencia"
+        "Tipo TV", "Pertenencia","responsable"
     ]
     ws.append(headers)
 
@@ -179,8 +193,9 @@ async def export_products_excel():
             "Sí" if p.Multifuncional else "No",
             p.tipo_impresion or '',
             p.tipo_tv or '',
-            p.pertenencia
-        ])
+            p.pertenencia,
+            p.responsable                                 
+        ])  
 
     # Guardar en memoria
     output = io.BytesIO()
