@@ -29,20 +29,18 @@ def ruta_crear_tabla(esquema: TablaCreate):
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.delete("/tablasDelete/{nombre_tabla}")
-async def eliminar_tabla(nombre_tabla: str):
+@router.delete("/tablasDelete/{nombre_tabla}") 
+async def eliminar_tabla(nombre_tabla: str): 
     try:
-        from storage import get_db
+        from storage import get_db 
         conn = get_db()
         cursor = conn.cursor()
         cursor.execute(f"DROP TABLE IF EXISTS {nombre_tabla}")
         conn.commit()
         return {"message": f"Tabla {nombre_tabla} eliminada exitosamente"}
-    except Exception as e:
+    except Exception as e: 
         raise HTTPException(status_code=500, detail=f"No se pudo eliminar la tabla: {e}")
-
-
-
+  
 @router.get("/tablas", response_model=list[str])
 def ruta_listar_tablas():
     """Listar todas las tablas en la base de datos"""

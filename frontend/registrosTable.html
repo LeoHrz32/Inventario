@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión Dinámica de Tablas</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <!-- CSS personalizado -->
+  <link rel="stylesheet" href="./static/css/table.css">
+</head>
+
+<body>
+  <!-- Barra de navegación -->
+  <nav class="navbar-custom" role="navigation" aria-label="main navigation">
+    <div class="nav-links">
+      <a href="/users"><i class="fas fa-user"></i> Usuarios</a>
+      <a href="/categorias"><i class="fas fa-shield-alt"></i> Categorías</a>
+      <a href="/products"><i class="fas fa-cogs"></i> Inventario tecnologico GTIC </a>
+      <a href="/tablasTable"><i class="fas fa-cogs"></i>Items Inventario</a>
+      <a href="/registrosTable"><i class="fas fa-cogs"></i>Registros</a>
+    </div>
+    <button id="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="main-content container-fluid mt-4">
+    <h1 class="mb-4 text-center">Gestión Dinámica de Tablas</h1>
+
+    <!-- Barra de selección y acciones -->
+    <div class="d-flex flex-wrap justify-content-center align-items-center gap-2 mb-3">
+      <!-- Selector de tabla -->
+      <select id="table-selector" class="form-select w-auto" required>
+        <option value="" selected>-- Elige tabla --</option>
+      </select>
+      <!-- Botón Cargar tabla -->
+      <button id="btn-load" class="btn btn-secondary">
+        <i class="fas fa-sync"></i> Cargar tabla
+      </button>
+      <!-- Botón Nuevo registro -->
+      <button id="btn-new" class="btn btn-primary" disabled>
+        <i class="fas fa-plus"></i> Nuevo registro
+      </button>
+      <!-- Input de búsqueda -->
+      <input id="search-input" type="text" class="form-control w-auto" placeholder="Buscar...">
+    </div>
+
+    <!-- Mensaje de error -->
+    <div id="error-message" class="alert alert-danger d-none" role="alert"></div>
+
+    <!-- Spinner de carga -->
+    <div id="loading-spinner" class="text-center d-none my-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+
+    <!-- Tabla responsiva oculta inicialmente -->
+    <div class="table-responsive d-none">
+      <table id="data-table" class="table table-striped table-bordered">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+
+      <!-- Paginación -->
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <button id="prev-page" class="btn btn-outline-primary btn-sm">Anterior</button>
+        <span id="page-info" class="text-muted"></span>
+        <button id="next-page" class="btn btn-outline-primary btn-sm">Siguiente</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal crear/editar registro -->
+  <div class="modal fade" id="recordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="recordModalLabel">Registro</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="record-form" class="needs-validation" novalidate>
+          <div class="modal-body row gx-3 gy-2" id="modal-body">
+            <!-- Campos dinámicos -->
+          </div>
+          <div class="modal-footer">  
+            <button type="submit" class="btn btn-success w-100">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="./static/js/registros.js"></script>
+</body>
+
+</html>

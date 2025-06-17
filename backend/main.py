@@ -7,7 +7,7 @@ import os
 from routes.userRoutes import get_user
 from routes.userRoutes import router as user_router
 from routes.categoriaRoutes import router as categoria_router
-
+from routes.registroRoutes import router as registro_router
 from routes.productosRoutes import router as productos_router
 from routes.configRoutes import router as config_router
 
@@ -37,6 +37,7 @@ app.include_router(user_router)
 app.include_router(categoria_router)
 app.include_router(productos_router)
 app.include_router(config_router)
+app.include_router(registro_router)
 
 
 # Login page
